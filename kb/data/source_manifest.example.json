@@ -1,0 +1,45 @@
+[
+  {
+    "source_id": "real_web_001",
+    "type": "web",
+    "ref": "https://www.consumerfinance.gov/consumer-tools/",
+    "title": "Consumer finance public guidance",
+    "category": "faq",
+    "subcategory": "consumer_guidance",
+    "language": "en",
+    "market": "global",
+    "tags": ["finance", "guidance"]
+  },
+  {
+    "source_id": "real_web_001_duplicate",
+    "type": "web",
+    "ref": "https://www.consumerfinance.gov/consumer-tools/",
+    "title": "Consumer finance public guidance duplicate",
+    "category": "faq",
+    "subcategory": "consumer_guidance",
+    "language": "en",
+    "market": "global",
+    "tags": ["finance", "guidance", "duplicate-test"]
+  },
+  {
+    "source_id": "real_pdf_001",
+    "type": "pdf",
+    "ref": "raw/real_terms.pdf",
+    "title": "Real finance terms PDF",
+    "category": "policy",
+    "subcategory": "fees",
+    "language": "en",
+    "market": "global",
+    "tags": ["policy", "fees"]
+  },
+  {
+    "source_id": "failure_001",
+    "type": "pdf",
+    "ref": "raw/missing_source.pdf",
+    "title": "Intentional extraction failure example",
+    "category": "faq",
+    "subcategory": "failure_test",
+    "language": "en",
+    "market": "global"
+  }
+]

@@ -1,0 +1,19 @@
+{
+  "precision": "100% for delivered scenario nudges",
+  "delivered_true_positives": 5,
+  "delivered_false_positives": 0,
+  "suppressed_by_control": {
+    "confidence_threshold": 1,
+    "duplicate_evidence": 1,
+    "cooldown": 1,
+    "max_active_two": 1,
+    "noisy_sentiment_two_turn_rule": 1
+  },
+  "false_alarm_examples": [
+    {
+      "evidence": "I am frustrated maybe, I cannot tell.",
+      "label": "false_alarm_suppressed",
+      "reason": "Low ASR confidence and only one supporting turn in a noisy call."
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "_note": "Match field names to your samples/asr_manifest.example.json if they differ. 'reference' must be EXACTLY what the speaker says.",
+  "items": [
+    {"id": "ph_01", "market": "ph", "language": "en", "scenario": "english_premium", "speaker": "A", "audio": "samples/asr_audio/ph_01.wav", "reference": "Hello, I would like to know how much the monthly premium is for my life insurance policy."},
+    {"id": "ph_02", "market": "ph", "language": "tl", "scenario": "tagalog_due_date", "speaker": "A", "audio": "samples/asr_audio/ph_02.wav", "reference": "Magandang umaga po. Gusto ko po sanang malaman kung kailan ang due date ng bayad ko."},
+    {"id": "ph_03", "market": "ph", "language": "tl", "scenario": "tagalog_beneficiary", "speaker": "A", "audio": "samples/asr_audio/ph_03.wav", "reference": "Hindi ko po alam kung sino ang beneficiary na nakalagay sa policy ko."},
+    {"id": "ph_04", "market": "ph", "language": "tl", "scenario": "taglish_lapse", "speaker": "A", "audio": "samples/asr_audio/ph_04.wav", "reference": "Hello po, na-lapse na po ba yung policy ko kasi late ako nagbayad ng premium?"},
+    {"id": "ph_05", "market": "ph", "language": "tl", "scenario": "taglish_rider", "speaker": "A", "audio": "samples/asr_audio/ph_05.wav", "reference": "Pwede ba akong mag-add ng rider para sa critical illness coverage?"},
+    {"id": "ph_06", "market": "ph", "language": "tl", "scenario": "taglish_objection", "speaker": "A", "audio": "samples/asr_audio/ph_06.wav", "reference": "Ang mahal po ng premium, wala pa akong budget ngayong buwan."},
+    {"id": "ph_07", "market": "ph", "language": "tl", "scenario": "bank_referral", "speaker": "A", "audio": "samples/asr_audio/ph_07.wav", "reference": "Na-refer po ako ng bank ko, sabi nila may insurance plan daw na pwede sa akin."},
+    {"id": "ph_08", "market": "ph", "language": "tl", "scenario": "numbers_dates", "speaker": "A", "audio": "samples/asr_audio/ph_08.wav", "reference": "Magbabayad ako ng five thousand five hundred pesos sa October fifteen."},
+    {"id": "ph_09", "market": "ph", "language": "tl", "scenario": "human_escalation", "speaker": "A", "audio": "samples/asr_audio/ph_09.wav", "reference": "Pwede ko po bang makausap ang agent ninyo? Gusto ko po ng tao na kausap."},
+    {"id": "ph_10", "market": "ph", "language": "tl", "scenario": "taglish_casual", "speaker": "A", "audio": "samples/asr_audio/ph_10.wav", "reference": "Okay lang po, i-send na lang ninyo yung details sa email ko mamaya."},
+
+    {"id": "id_01", "market": "id", "language": "id", "scenario": "formal_due_date", "speaker": "A", "accent": "standard", "audio": "samples/asr_audio/id_01.wav", "reference": "Selamat siang, saya ingin menanyakan tanggal jatuh tempo angsuran pembiayaan motor saya."},
+    {"id": "id_02", "market": "id", "language": "id", "scenario": "formal_denda", "speaker": "A", "accent": "standard", "audio": "samples/asr_audio/id_02.wav", "reference": "Berapa besar denda yang dikenakan jika saya terlambat membayar cicilan?"},
+    {"id": "id_03", "market": "id", "language": "id", "scenario": "formal_tenor", "speaker": "A", "accent": "standard", "audio": "samples/asr_audio/id_03.wav", "reference": "Bisakah tenor pembiayaan saya diperpanjang menjadi tiga puluh enam bulan?"},
+    {"id": "id_04", "market": "id", "language": "id", "scenario": "colloquial_payment_difficulty", "speaker": "A", "accent": "standard", "audio": "samples/asr_audio/id_04.wav", "reference": "Aduh Kak, gaji aku belum masuk nih, bisa gak bayar cicilannya minggu depan aja?"},
+    {"id": "id_05", "market": "id", "language": "id", "scenario": "colloquial_objection", "speaker": "A", "accent": "standard", "audio": "samples/asr_audio/id_05.wav", "reference": "Gak usah telepon terus dong, nanti aku bayar kok."},
+    {"id": "id_06", "market": "id", "language": "id", "scenario": "english_loanwords", "speaker": "A", "accent": "standard", "audio": "samples/asr_audio/id_06.wav", "reference": "Kemarin DP-nya sudah saya transfer, tapi kok due date-nya masih sama ya?"},
+    {"id": "id_07", "market": "id", "language": "id", "scenario": "numbers_dates", "speaker": "A", "accent": "standard", "audio": "samples/asr_audio/id_07.wav", "reference": "Cicilan saya satu juta lima ratus ribu rupiah, jatuh tempo tanggal lima belas Oktober."},
+    {"id": "id_08", "market": "id", "language": "id", "scenario": "human_escalation", "speaker": "A", "accent": "standard", "audio": "samples/asr_audio/id_08.wav", "reference": "Saya mau bicara dengan petugas langsung, jangan pakai robot."},
+    {"id": "id_09", "market": "id", "language": "id", "scenario": "regional_javanese", "speaker": "B-Javanese", "accent": "javanese", "audio": "samples/asr_audio/id_09.wav", "reference": "Mbak, saya mau bayar angsuran lewat Indomaret, bisa nggak?"},
+    {"id": "id_10", "market": "id", "language": "id", "scenario": "regional_sundanese", "speaker": "C-Sundanese", "accent": "sundanese", "audio": "samples/asr_audio/id_10.wav", "reference": "Maaf Pak, tanggal berapa ya angsuran saya harus dibayar?"}
+  ]
+}

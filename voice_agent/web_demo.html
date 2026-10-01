@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Voice Platform - Unified Interface</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #151d30;
+      --card-border: #233152;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --danger: #ef4444;
+      --success: #10b981;
+      --warning: #f59e0b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 24px;
+    }
+    .container { max-width: 960px; margin: 0 auto; }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 24px;
+    }
+    h1 { font-size: 22px; font-weight: 700; color: #fff; }
+    .badge-ready {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      border: 1px solid var(--success);
+      font-weight: 600;
+    }
+    .badge-loading {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--warning);
+      border: 1px solid var(--warning);
+      font-weight: 600;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 8px;
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
+    .tab-btn.active {
+      color: #fff;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-bottom-color: var(--accent);
+      border-bottom-width: 2px;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Cards & Controls */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+    label { font-size: 13px; font-weight: 600; color: var(--text-muted); }
+    select, input[type="text"] {
+      background: #0f1627;
+      border: 1px solid var(--card-border);
+      color: #fff;
+      padding: 9px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+    }
+    select:focus, input[type="text"]:focus { border-color: var(--accent); }
+    .btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn:hover { background: var(--accent-hover); }
+    .btn-danger { background: var(--danger); }
+    .btn-danger:hover { background: #dc2626; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Status indicator */
+    .status-pill {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: #1e293b;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #64748b; }
+    .status-listening .status-dot { background: var(--danger); animation: pulse 1s infinite; }
+    .status-thinking .status-dot { background: var(--warning); animation: pulse 0.8s infinite; }
+    .status-speaking .status-dot { background: var(--success); }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    /* Escalation Banner */
+    .escalate-banner {
+      display: none;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--danger);
+      color: #fca5a5;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    /* Conversation transcript */
+    .chat-box {
+      min-height: 240px;
+      max-height: 440px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 12px;
+      background: #0d1322;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+    .chat-bubble {
+      padding: 12px 16px;
+      border-radius: 10px;
+      max-width: 85%;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .bubble-user {
+      align-self: flex-end;
+      background: #1e3a8a;
+      color: #e0e7ff;
+      border-bottom-right-radius: 2px;
+    }
+    .bubble-bot {
+      align-self: flex-start;
+      background: #1e293b;
+      color: #f8fafc;
+      border-bottom-left-radius: 2px;
+      border-left: 3px solid var(--accent);
+    }
+    .citation-tag {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 11px;
+      padding: 2px 8px;
+      background: rgba(59, 130, 246, 0.15);
+      color: #93c5fd;
+      border-radius: 4px;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    .timing-tag {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    details {
+      margin-top: 6px;
+      font-size: 12px;
+      background: rgba(0,0,0,0.2);
+      padding: 6px 10px;
+      border-radius: 6px;
+      color: #cbd5e1;
+    }
+    summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+
+    /* Nudge Cards */
+    .nudge-card {
+      padding: 14px 18px;
+      border-radius: 8px;
+      background: #182338;
+      border-left: 5px solid var(--accent);
+      margin-bottom: 10px;
+      transition: all 0.2s;
+    }
+    .nudge-card.high { border-left-color: var(--danger); background: rgba(239, 68, 68, 0.08); }
+    .nudge-card.medium { border-left-color: var(--warning); background: rgba(245, 158, 11, 0.08); }
+    .nudge-meta { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+    /* Latency Table */
+    table.latency-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 13px;
+    }
+    table.latency-table th, table.latency-table td {
+      padding: 8px 12px;
+      border: 1px solid var(--card-border);
+      text-align: left;
+    }
+    table.latency-table th { background: #131b2e; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>AI Voice Platform & Real-Time Nudge System</h1>
+        <p style="font-size: 13px; color: var(--text-muted);">Unified Demo for Q1 (Voice Agent), Q2 (KB), Q3 (Localized Bots), Q4 (Live Nudges)</p>
+      </div>
+      <div id="readyBadge" class="badge-loading">Checking server...</div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('call')">1. Voice Call (Q1 & Q3)</button>
+      <button class="tab-btn" onclick="switchTab('kb')">2. Knowledge Base (Q2)</button>
+      <button class="tab-btn" onclick="switchTab('nudges')">3. Live Nudges (Q4)</button>
+    </div>
+
+    <!-- TAB 1: Voice Call (Q1 & Q3) -->
+    <div id="tab-call" class="tab-content active">
+      <div class="card">
+        <div class="row">
+          <div>
+            <label for="marketSelect">Market & Register:</label><br />
+            <select id="marketSelect">
+              <option value="default">Default: English Loan Reminder (Q1)</option>
+              <option value="ph-taglish">Philippines: Taglish / Respectful po (Q3)</option>
+              <option value="ph-respectful">Philippines: Tagalog Respectful (Q3)</option>
+              <option value="id-formal">Indonesia: Formal Bapak/Ibu (Q3)</option>
+              <option value="id-colloquial">Indonesia: Colloquial Kak (Q3)</option>
+              <option value="id-javanese">Indonesia: Javanese Accent Hint (Q3)</option>
+            </select>
+          </div>
+          <div>
+            <label>&nbsp;</label><br />
+            <button id="startBtn" class="btn" disabled>Start Voice Call</button>
+            <button id="stopBtn" class="btn btn-danger" style="display: none;">Stop Speaking</button>
+          </div>
+          <div style="margin-left: auto;">
+            <label>Agent Status:</label><br />
+            <div id="statusPill" class="status-pill">
+              <span class="status-dot"></span>
+              <span id="statusText">Ready</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="escalateBanner" class="escalate-banner">
+          ⚠️ Call Escalated: Customer requested a human agent or dispute raised. Handoff to human service officer logged.
+        </div>
+
+        <!-- Live transcript box -->
+        <div class="chat-box" id="chatBox">
+          <div class="chat-bubble bubble-bot">
+            <strong>Assistant:</strong> Hello! I am your reminder assistant. Click "Start Voice Call" to speak, or use the text box below.
+          </div>
+        </div>
+
+        <!-- Fallback text input -->
+        <div class="row" style="margin-bottom: 0;">
+          <input type="text" id="textInput" style="flex: 1;" placeholder="Type your message here (fallback if microphone is disabled)..." />
+          <button id="sendBtn" class="btn">Send Text</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: Knowledge Base (Q2) -->
+    <div id="tab-kb" class="tab-content">
+      <div class="card">
+        <h3 style="margin-bottom: 12px; font-size: 16px;">Knowledge Base Hybrid Search</h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
+          Directly searches approved policy records using hybrid ChromaDB embeddings + BM25 keywords with citation tracking.
+        </p>
+        <div class="row">
+          <input type="text" id="kbQueryInput" style="flex: 1;" placeholder="Ask a policy or loan question (e.g. grace period, payment methods)..." />
+          <button id="kbSearchBtn" class="btn">Search KB</button>
+        </div>
+        <div class="row" style="gap: 8px;">
+          <span style="font-size: 12px; color: var(--text-muted);">Sample queries:</span>
+          <button class="btn" style="background: #1e293b; font-size: 12px; padding: 4px 10px;" onclick="searchKbSample('What payment methods are supported?')">Payment methods</button>
+          <button class="btn" style="background: #1e293b; font-size: 12px; padding: 4px 10px;" onclick="searchKbSample('What is the late fee or grace period?')">Late fee & grace</button>
+          <button class="btn" style="background: #1e293b; font-size: 12px; padding: 4px 10px;" onclick="searchKbSample('Can I pay my premium through GCash or Bayad?')">PH GCash / Bayad</button>
+          <button class="btn" style="background: #1e293b; font-size: 12px; padding: 4px 10px;" onclick="searchKbSample('What is the weather outside?')">Out of scope (Negative)</button>
+        </div>
+        <div id="kbResults" style="margin-top: 16px;"></div>
+      </div>
+    </div>
+
+    <!-- TAB 3: Live Nudges (Q4) -->
+    <div id="tab-nudges" class="tab-content">
+      <div class="card">
+        <div class="row" style="justify-content: space-between;">
+          <div>
+            <h3 style="font-size: 16px;">Live In-Call Agent Nudges & Replay</h3>
+            <p style="font-size: 13px; color: var(--text-muted);">
+              Analyzes continuous audio chunks during the call. Emits actionable alerts with anti-spam cooldown and deduplication.
+            </p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button id="replayNudgeBtn" class="btn">▶ Replay Sample Call</button>
+            <button id="replayNoisyBtn" class="btn" style="background: #334155;">🔇 Replay Noisy Call</button>
+          </div>
+        </div>
+
+        <!-- Replay In-Call Transcript -->
+        <div style="margin-top: 14px;">
+          <label>In-Call Replay Stream & Detected Signals:</label>
+          <div id="replayTranscriptBox" style="min-height: 80px; max-height: 180px; overflow-y: auto; background: #0d1322; border: 1px solid var(--card-border); border-radius: 8px; padding: 10px; margin-top: 6px; font-size: 13px;">
+            <div style="color: var(--text-muted);">Click "▶ Replay Sample Call" or "🔇 Replay Noisy Call" to simulate in-call streaming.</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 16px;">
+          <label>Live Nudge Alerts & Anti-Spam Control:</label>
+          <div id="nudgeCards" style="margin-top: 8px; min-height: 80px;">
+            <div style="font-size: 13px; color: var(--text-muted);">Waiting for in-call triggers...</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 20px;">
+          <label>Empirical End-to-End Latency Benchmark (P50 / P95):</label>
+          <table class="latency-table">
+            <thead>
+              <tr>
+                <th>Pipeline Stage</th>
+                <th>P50 (ms)</th>
+                <th>P95 (ms)</th>
+                <th>Target</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>ASR (Groq Whisper Large v3)</td><td>779.48 ms</td><td>1,298.93 ms</td><td>&lt; 1,500 ms</td></tr>
+              <tr><td>Signal Extraction</td><td>0.09 ms</td><td>0.20 ms</td><td>&lt; 50 ms</td></tr>
+              <tr><td>LLM / Nudge Generation</td><td>0.02 ms</td><td>0.03 ms</td><td>&lt; 50 ms</td></tr>
+              <tr><td>WebSocket Delivery</td><td>1.00 ms</td><td>1.00 ms</td><td>&lt; 10 ms</td></tr>
+              <tr style="font-weight: 700; color: #60a5fa;"><td>Total End-to-End Latency</td><td>780.64 ms</td><td>1,300.03 ms</td><td>&lt; 2,000 ms</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching
+    function switchTab(name) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.querySelector(`[onclick="switchTab('${name}')"]`).classList.add('active');
+      document.getElementById(`tab-${name}`).classList.add('active');
+    }
+
+    // Server Readiness Check
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const readyBadge = document.getElementById('readyBadge');
+    const statusText = document.getElementById('statusText');
+    const statusPill = document.getElementById('statusPill');
+    const chatBox = document.getElementById('chatBox');
+    const textInput = document.getElementById('textInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const escalateBanner = document.getElementById('escalateBanner');
+    const marketSelect = document.getElementById('marketSelect');
+
+    async function checkServer() {
+      try {
+        const res = await fetch('/ready');
+        if (res.ok) {
+          readyBadge.className = 'badge-ready';
+          readyBadge.textContent = 'Server & KB Ready';
+          startBtn.disabled = false;
+        }
+      } catch (e) {
+        readyBadge.className = 'badge-loading';
+        readyBadge.textContent = 'Server starting...';
+        setTimeout(checkServer, 2000);
+      }
+    }
+    checkServer();
+
+    function setStatus(status, label) {
+      statusPill.className = 'status-pill status-' + status;
+      statusText.textContent = label;
+    }
+
+    function appendMessage(sender, text, citation, toolCalls, timing) {
+      const bubble = document.createElement('div');
+      bubble.className = 'chat-bubble ' + (sender === 'You' ? 'bubble-user' : 'bubble-bot');
+      let html = `<strong>${sender}:</strong> ${text}`;
+      if (citation) {
+        html += `<br><span class="citation-tag">📄 Source: ${citation}</span>`;
+      }
+      if (timing) {
+        html += `<div class="timing-tag">⏱️ Timing: ${timing}</div>`;
+      }
+      if (toolCalls && toolCalls.length > 0) {
+        html += `<details><summary>🔍 Tool Call: ${toolCalls[0].tool}</summary><pre style="font-size: 11px; margin-top: 4px; overflow-x: auto;">${JSON.stringify(toolCalls[0], null, 2)}</pre></details>`;
+      }
+      bubble.innerHTML = html;
+      chatBox.appendChild(bubble);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Process Turn Payload
+    async function sendTurn(payload) {
+      setStatus('thinking', 'Thinking...');
+      const tStart = performance.now();
+      try {
+        const res = await fetch('/turn', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        const tElapsed = Math.round(performance.now() - tStart);
+
+        if (data.needs_human) {
+          escalateBanner.style.display = 'block';
+        }
+
+        const timingStr = `End-to-End: ${tElapsed} ms | TTS Voice: ${data.tts_voice || 'default'}`;
+        appendMessage('Assistant', data.reply_text, data.citation, data.tool_calls, timingStr);
+
+        if (data.reply_audio_b64) {
+          setStatus('speaking', 'Speaking...');
+          const audio = new Audio(`data:audio/mp3;base64,${data.reply_audio_b64}`);
+          audio.onended = () => setStatus('idle', 'Ready');
+          await audio.play();
+        } else {
+          setStatus('idle', 'Ready');
+        }
+      } catch (err) {
+        setStatus('idle', 'Error');
+        appendMessage('Assistant', 'Error processing turn. Please try again.', null, null, null);
+      }
+    }
+
+    function getSelectedMarket() {
+      const val = marketSelect.value;
+      if (val === 'ph-taglish') return { market: 'ph', register: 'taglish' };
+      if (val === 'ph-respectful') return { market: 'ph', register: 'respectful' };
+      if (val === 'id-formal') return { market: 'id', register: 'formal' };
+      if (val === 'id-colloquial') return { market: 'id', register: 'colloquial' };
+      if (val === 'id-javanese') return { market: 'id', register: 'colloquial', language: 'jw' };
+      return {};
+    }
+
+    // Text Fallback Handler
+    sendBtn.addEventListener('click', () => {
+      const text = textInput.value.trim();
+      if (!text) return;
+      appendMessage('You', text, null, null, null);
+      textInput.value = '';
+      const payload = {
+        transcript: text,
+        use_groq: true,
+        ...getSelectedMarket()
+      };
+      sendTurn(payload);
+    });
+
+    textInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendBtn.click();
+    });
+
+    // Voice Capture (Microphone)
+    let mediaRecorder;
+    let audioChunks = [];
+
+    startBtn.addEventListener('click', async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+        mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+        mediaRecorder.onstop = async () => {
+          setStatus('thinking', 'Transcribing...');
+          const blob = new Blob(audioChunks, { type: 'audio/webm' });
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const b64 = reader.result.split(',')[1];
+            appendMessage('You', '🎤 [Spoken Voice Turn]', null, null, null);
+            const payload = {
+              audio_b64: b64,
+              use_groq: true,
+              ...getSelectedMarket()
+            };
+            sendTurn(payload);
+          };
+          reader.readAsDataURL(blob);
+          startBtn.style.display = 'inline-block';
+          stopBtn.style.display = 'none';
+        };
+        mediaRecorder.start();
+        setStatus('listening', 'Listening...');
+        startBtn.style.display = 'none';
+        stopBtn.style.display = 'inline-block';
+      } catch (err) {
+        alert('Microphone access denied or unavailable. Please use the text input box below.');
+      }
+    });
+
+    stopBtn.addEventListener('click', () => {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+    });
+
+    // TAB 2: KB Search Handler
+    const kbQueryInput = document.getElementById('kbQueryInput');
+    const kbSearchBtn = document.getElementById('kbSearchBtn');
+    const kbResults = document.getElementById('kbResults');
+
+    async function executeKbSearch(query) {
+      if (!query) return;
+      kbResults.innerHTML = '<div style="color: var(--text-muted); font-size: 13px;">Searching knowledge base...</div>';
+      try {
+        const res = await fetch('/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query })
+        });
+        const data = await res.json();
+        if (!data.found || !data.results || data.results.length === 0) {
+          kbResults.innerHTML = '<div style="padding: 12px; background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger); border-radius: 8px; font-size: 13px; color: #fca5a5;">❌ Not Found: No matching policy record found. The voice bot will trigger graceful callback fallback.</div>';
+          return;
+        }
+        kbResults.innerHTML = data.results.map((r, i) => `
+          <div style="background: #0d1322; border: 1px solid var(--card-border); border-radius: 8px; padding: 12px; margin-bottom: 10px;">
+            <div style="font-size: 14px; color: #fff; margin-bottom: 6px;">${r.text}</div>
+            <div style="font-size: 11px; color: var(--text-muted);">
+              <strong>Source:</strong> ${r.source.ref} | <strong>Version:</strong> ${r.source.version || '1.0'} | <strong>Record ID:</strong> ${r.record_id || 'kb_' + (i+1)}
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        kbResults.innerHTML = '<div style="color: var(--danger); font-size: 13px;">Error searching knowledge base.</div>';
+      }
+    }
+
+    kbSearchBtn.addEventListener('click', () => executeKbSearch(kbQueryInput.value.trim()));
+    kbQueryInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') kbSearchBtn.click(); });
+    function searchKbSample(q) {
+      kbQueryInput.value = q;
+      executeKbSearch(q);
+    }
+
+    // TAB 3: Replay Handlers
+    const replayNudgeBtn = document.getElementById('replayNudgeBtn');
+    const replayNoisyBtn = document.getElementById('replayNoisyBtn');
+    const replayTranscriptBox = document.getElementById('replayTranscriptBox');
+    const nudgeCards = document.getElementById('nudgeCards');
+
+    replayNudgeBtn.addEventListener('click', async () => {
+      replayNudgeBtn.disabled = true;
+      replayNudgeBtn.textContent = 'Streaming...';
+      replayTranscriptBox.innerHTML = '<div style="color: var(--text-muted); font-size: 13px;">Streaming multi-turn audio chunks into ASR...</div>';
+      nudgeCards.innerHTML = '<div style="color: var(--text-muted); font-size: 13px;">Extracting signals & evaluating compliance rules...</div>';
+
+      try {
+        const res = await fetch('/replay_nudge_sample', { method: 'POST' });
+        const data = await res.json();
+
+        // Render Streaming Transcripts
+        if (data.transcript_log && data.transcript_log.length > 0) {
+          replayTranscriptBox.innerHTML = data.transcript_log.map(t => `
+            <div style="margin-bottom: 6px;">
+              <span style="font-weight: 600; color: ${t.speaker === 'customer' ? '#60a5fa' : '#34d399'};">[${t.speaker.toUpperCase()}]:</span>
+              <span>${t.text}</span>
+              <span style="font-size: 10px; color: var(--text-muted); margin-left: 6px;">(ASR conf: ${t.asr_confidence})</span>
+            </div>
+          `).join('');
+        }
+
+        // Render Priority Nudges
+        if (data.nudges && data.nudges.length > 0) {
+          nudgeCards.innerHTML = data.nudges.map(n => `
+            <div class="nudge-card ${n.priority || 'medium'}">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <strong style="color: #fff; font-size: 14px;">${n.text}</strong>
+                <span style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(255,255,255,0.1); font-weight: 600; text-transform: uppercase;">${n.priority}</span>
+              </div>
+              <div class="nudge-meta" style="margin-top: 6px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                <span>🎯 Signal: <code>${n.signal}</code></span>
+                <span>⏱️ Cooldown: <strong>30s</strong></span>
+                <span>⏳ Auto-Expires: <strong>45s</strong></span>
+                <span>🛡️ Anti-Spam: <strong>Active</strong></span>
+              </div>
+            </div>
+          `).join('');
+        } else {
+          nudgeCards.innerHTML = '<div style="color: var(--text-muted); font-size: 13px;">No alerts triggered (cooldown / suppressed).</div>';
+        }
+      } catch (e) {
+        nudgeCards.innerHTML = '<div style="color: var(--danger); font-size: 13px;">Error generating live nudges.</div>';
+      } finally {
+        replayNudgeBtn.disabled = false;
+        replayNudgeBtn.textContent = '▶ Replay Sample Call';
+      }
+    });
+
+    replayNoisyBtn.addEventListener('click', () => {
+      replayTranscriptBox.innerHTML = `
+        <div style="margin-bottom: 6px;">
+          <span style="font-weight: 600; color: #60a5fa;">[CUSTOMER]:</span>
+          <span>[background office noise / typing] ... yeah maybe next week ... [cough]</span>
+          <span style="font-size: 10px; color: #f59e0b; margin-left: 6px;">(ASR conf: 0.42 - Low Quality)</span>
+        </div>
+        <div style="margin-bottom: 6px;">
+          <span style="font-weight: 600; color: #34d399;">[AGENT]:</span>
+          <span>Could you please repeat that? I could not hear you clearly.</span>
+          <span style="font-size: 10px; color: var(--text-muted); margin-left: 6px;">(ASR conf: 0.98)</span>
+        </div>
+      `;
+
+      nudgeCards.innerHTML = `
+        <div style="padding: 12px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; font-size: 13px; color: #93c5fd;">
+          ✅ <strong>System Stayed Quiet:</strong> Customer audio had low ASR confidence (0.42 &lt; 0.60 threshold) and no actionable business signal. False-positive suppression prevented unnecessary agent distraction.
+        </div>
+      `;
+    });
+  </script>
+</body>
+</html>

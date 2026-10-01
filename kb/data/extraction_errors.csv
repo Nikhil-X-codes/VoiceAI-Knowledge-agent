@@ -1,0 +1,2 @@
+source_id,ref,error_type,message,status
+real_pdf_001,raw/real_terms.pdf,empty_or_failed_extraction,No text extracted from source.,failed

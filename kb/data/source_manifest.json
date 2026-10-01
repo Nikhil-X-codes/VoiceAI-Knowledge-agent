@@ -1,0 +1,17 @@
+[
+  {
+    "source_id": "real_web_001",
+    "type": "web",
+    "ref": "https://www.consumerfinance.gov/consumer-tools/",
+    "title": "Consumer finance public guidance",
+    "category": "faq",
+    "tags": ["finance", "guidance"]
+  },
+  {
+    "source_id": "real_pdf_001",
+    "type": "pdf",
+    "ref": "raw/real_terms.pdf",
+    "title": "Real finance terms PDF",
+    "category": "policy"
+  }
+]

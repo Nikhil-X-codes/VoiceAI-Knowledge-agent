@@ -1,0 +1,114 @@
+[
+  {
+    "scenario": "missed-cross-sell",
+    "expected": "one nudge",
+    "signals": [
+      {
+        "signal": "missed_cross_sell",
+        "confidence": 0.91,
+        "evidence": "Customer mentioned another vehicle without a follow-up.",
+        "priority": "medium",
+        "topic": "cross-sell"
+      }
+    ],
+    "delivered_nudges": [
+      {
+        "text": "Ask about the customer's second vehicle needs.",
+        "signal": "missed_cross_sell",
+        "priority": "medium",
+        "confidence": 0.91,
+        "topic": "cross-sell",
+        "evidence": "Customer mentioned another vehicle without a follow-up.",
+        "emitted_at": 0,
+        "expires_at": 20.0
+      }
+    ],
+    "pass": true,
+    "labels": [
+      {
+        "nudge": "Ask about the customer's second vehicle needs.",
+        "label": "true_positive"
+      }
+    ]
+  },
+  {
+    "scenario": "skipped-disclosure",
+    "expected": "compliance reminder",
+    "signals": [
+      {
+        "signal": "compliance_gap",
+        "confidence": 0.86,
+        "evidence": "Required disclosure is not marked as spoken.",
+        "priority": "high",
+        "topic": "disclosure"
+      }
+    ],
+    "delivered_nudges": [
+      {
+        "text": "Give the required disclosure before continuing.",
+        "signal": "compliance_gap",
+        "priority": "high",
+        "confidence": 0.86,
+        "topic": "disclosure",
+        "evidence": "Required disclosure is not marked as spoken.",
+        "emitted_at": 0,
+        "expires_at": 20.0
+      }
+    ],
+    "pass": true,
+    "labels": [
+      {
+        "nudge": "Give the required disclosure before continuing.",
+        "label": "true_positive"
+      }
+    ]
+  },
+  {
+    "scenario": "rising-frustration",
+    "expected": "de-escalation nudge",
+    "signals": [
+      {
+        "signal": "frustration",
+        "confidence": 0.88,
+        "evidence": "Repeated frustration language occurred across recent customer turns.",
+        "priority": "high",
+        "topic": "de-escalation"
+      }
+    ],
+    "delivered_nudges": [
+      {
+        "text": "Acknowledge the customer's frustration and slow down.",
+        "signal": "frustration",
+        "priority": "high",
+        "confidence": 0.88,
+        "topic": "de-escalation",
+        "evidence": "Repeated frustration language occurred across recent customer turns.",
+        "emitted_at": 0,
+        "expires_at": 20.0
+      }
+    ],
+    "pass": true,
+    "labels": [
+      {
+        "nudge": "Acknowledge the customer's frustration and slow down.",
+        "label": "true_positive"
+      }
+    ]
+  },
+  {
+    "scenario": "noisy-ambiguous",
+    "expected": "none or very few nudges",
+    "signals": [
+      {
+        "signal": "frustration",
+        "confidence": 0.72,
+        "evidence": "Customer used frustration language.",
+        "priority": "medium",
+        "topic": "de-escalation"
+      }
+    ],
+    "delivered_nudges": [],
+    "pass": true,
+    "labels": []
+  }
+]

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Live Nudges</title>
+  <style>
+    body { margin: 0; padding: 24px; font: 15px system-ui, sans-serif; background: #101820; color: #e8f0f2; }
+    main { max-width: 960px; margin: auto; }
+    h1 { margin-top: 0; }
+    #transcript { min-height: 90px; padding: 16px; background: #182832; border-radius: 8px; }
+    #nudges { display: grid; gap: 10px; margin-top: 16px; }
+    .nudge { padding: 14px; border-left: 5px solid #58c7b4; background: #1b3038; border-radius: 5px; }
+    .high { border-color: #f06b6b; }
+    .medium { border-color: #f2c14e; }
+    .meta { color: #a9c0c6; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Live call nudges</h1>
+    <section id="transcript">Waiting for transcript...</section>
+    <section id="nudges" aria-live="polite"></section>
+  </main>
+  <script>
+    const nudges = document.getElementById('nudges');
+    const transcript = document.getElementById('transcript');
+    const socket = new WebSocket(`ws://${location.host}/ws/nudges`);
+    socket.onmessage = (event) => {
+      const payload = JSON.parse(event.data);
+      if (payload.transcript) transcript.textContent = `${payload.speaker || 'call'}: ${payload.transcript}`;
+      const items = (payload.active_nudges && payload.active_nudges.length > 0) ? payload.active_nudges : payload.nudges;
+      if (items && items.length > 0) {
+        nudges.replaceChildren(...items.map((item) => {
+          const card = document.createElement('article');
+          card.className = `nudge ${item.priority || 'medium'}`;
+          card.innerHTML = `<strong>${item.text}</strong><div class="meta">${item.signal} · ${item.priority} · confidence ${item.confidence}</div>`;
+          return card;
+        }));
+      }
+    };
+  </script>
+</body>
+</html>
