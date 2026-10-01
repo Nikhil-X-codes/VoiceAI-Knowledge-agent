@@ -6,19 +6,6 @@ The system addresses customer debt reminder and loan counseling scenarios across
 
 ---
 
-## What Gets a Submission Rejected (And How This System Complies)
-
-| Rejection Condition | Why It Fails | How This Repository Avoids It |
-| :--- | :--- | :--- |
-| **Only architecture notes / No prototype** | Theoretical designs without code do not prove feasibility. | **Full working prototype:** End-to-end runnable services for Voice Agent (`:8001`), KB Search (`:8000`), and Live Nudge Dashboard (`:8002`). |
-| **Knowledge Base disconnected from Bot** | Hardcoding policy facts in system prompts causes stale data and hallucination. | **Dynamic tool-calling:** The agent queries ChromaDB + BM25 via the `search_kb` function and quotes citations. If `found=false`, it gracefully offers a callback or human handoff. |
-| **Hallucinated answers** | Inventing policy terms, interest rates, or fees damages customer trust. | **Zero-guessing policy:** System prompt strictly forbids guessing. Negative queries trigger native localized fallback phrases. |
-| **Unmeasured latency** | Claiming real-time behavior without benchmarks is unverified. | **Real empirical metrics:** Real-time dual-channel chunk stream logs exact millisecond timestamps (`latency.csv`) showing P50 total latency of **810.45 ms** (under 1 second). |
-| **Literal translation without localization** | Direct machine translation sounds robotic and culturally inappropriate. | **Native localization:** Implements Philippine honorifics (`po`/`opo`), local channels (GCash, Bayad), and Indonesian formal (`Bapak/Ibu`) vs. colloquial (`Kak`) registers with regional accents (Javanese/Sundanese). |
-| **Post-call analysis / Too many spam alerts** | Analyzing audio after upload is not real-time; alert fatigue blinds agents. | **Live in-call streaming with controls:** 3-second audio chunks analyzed mid-call; anti-spam controller applies confidence thresholds (0.60), 30s cooldowns, 20s expiry, and duplicate suppression. |
-| **Work you can't explain** | Black-box solutions without rationale or tests cannot be audited. | **Comprehensive documentation & test suite:** 38 automated unit tests across all 4 questions, detailed architectural diagrams, and documented limitations. |
-
----
 
 ## System Architecture
 
@@ -271,34 +258,6 @@ Generated from streaming dual-channel audio chunks in [`docs/latency_report.md`]
 
 ---
 
-## Video Walkthrough Presentation Script (5-8 Minutes)
-
-Use this outline when recording the video demonstration:
-
-### Part 1: System Overview & Live Demonstration (2 Minutes)
-1. **Introduction:** Briefly explain the problem: automated loan reminder and multifinance voice bot for Southeast Asian markets with real-time in-call agent assistance.
-2. **Start Services:** Show terminal starting Voice Agent (`:8001`) and Live Nudge Dashboard (`:8002`).
-3. **Live Call Turn:** Open `voice_agent/web_demo.html` or call `/turn` via terminal. Show the bot greeting the customer, quoting installment due date and amount, and gracefully saving a lead in `leads.json`.
-
-### Part 2: Knowledge Base & Grounded Retrieval (1.5 Minutes)
-1. **Show Zero-Hallucination Retrieval:** Query a policy question (e.g. late fees). Show the bot citing the specific policy record (`ref: loan_policy.jsonl, section 4.1`).
-2. **Demonstrate Negative Fallback:** Ask an out-of-scope question (e.g. *"What is the weather?"*). Show that the bot does not invent an answer; it states information is unavailable and offers a callback.
-
-### Part 3: Native-Language Bots (Philippines & Indonesia) (1.5 Minutes)
-1. **Philippines Life Insurance:** Send a Taglish turn (*"Can I pay premium with GCash, po?"*). Play the generated audio to demonstrate respectful `po/opo` tone and `fil-PH-BlessicaNeural` TTS.
-2. **Indonesia Multifinance:** Send a colloquial turn (*"Kak, gimana bayar cicilan?"*). Show register switching to `Kak`, local e-wallet options, and `id-ID-ArdiNeural` voice.
-3. **Show ASR Benchmark:** Display `docs/asr_results.json` showing 10.9% WER and regional Javanese accent handling.
-
-### Part 4: Live In-Call Nudges & Latency (1.5 Minutes)
-1. **Open Dashboard:** Show `http://127.0.0.1:8002` connected via WebSocket.
-2. **Trigger Live Nudges:** Run `run_real_stream.py`. Point to the browser as a **Missed Cross-Sell** card and a **High-Priority Frustration** card pop up in real time mid-call.
-3. **Show Anti-Spam Controls:** Demonstrate that duplicate statements are suppressed by the cooldown controller.
-4. **Show Latency Table:** Display the P50 latency of **780 ms** in `docs/latency_report.md`.
-
-### Part 5: Limitations & Production Improvement Plan (1 Minute)
-1. Conclude by summarizing known production limitations (rate limits, legal compliance) and the engineering roadmap.
-
----
 
 ## Written Sections
 
